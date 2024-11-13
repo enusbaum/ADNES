@@ -1,0 +1,2 @@
+﻿## License Information
+This package is open-source software, released under the permissive MIT License. You are free to use, modify, and distribute this package in both commercial and non-commercial projects. For full license details, please refer to the `LICENSE` file included in this package or visit [MIT License](https://opensource.org/licenses/MIT). Contributions are welcome and appreciated to improve and maintain this package.

@@ -3,8 +3,33 @@
 		<TargetFramework>net9.0</TargetFramework>
 		<LangVersion>latest</LangVersion>
 		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+
+		<Authors>Eric Nusbaum</Authors>
+		<Company>Nusbaum Consulting, LLC</Company>
+		<Copyright>Copyright ©2024 Nusbaum Consulting, LLC All rights reserved.</Copyright>
+
+		<Description>Another dotnet NES (ADNES) Emulator. A Nintendo Emulator within a NuGet Package, allowing you to easily integrate an NES emulator within your own project.</Description>
+		<IncludeSymbols>true</IncludeSymbols>
+		<SymbolPackageFormat>snupkg</SymbolPackageFormat>
+
+		<!-- NuGet settings -->
+		<PackageId>ADNES</PackageId>
+		<PackageVersion>1.0.0</PackageVersion>
+		<PackageTags>NES Nintendo Emulation Emulator</PackageTags>
+		<PackageLicenseExpression>MIT</PackageLicenseExpression>
+		<PackageProjectUrl>https://github.com/enusbaum/ADNES</PackageProjectUrl>
+		<PackageIcon>icon.png</PackageIcon>
+		<PackageReadmeFile>nuget.md</PackageReadmeFile>
+		<RepositoryType>git</RepositoryType>
+		<RepositoryUrl>https://github.com/enusbaum/ADNES</RepositoryUrl>
+
 	</PropertyGroup>
 	<ItemGroup>
 		<InternalsVisibleTo Include="ADNES.Tests" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<None Include="icon.png" Pack="true" PackagePath="\" />
+		<None Include="nuget.md" Pack="true" PackagePath="\" />
 	</ItemGroup>
 </Project>
