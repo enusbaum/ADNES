@@ -4,7 +4,6 @@ using ADNES.Cartridge.Mappers;
 using ADNES.Cartridge.Mappers.Enums;
 using ADNES.Cartridge.Mappers.impl;
 using ADNES.Common.Extensions;
-using Microsoft.Extensions.Logging;
 
 namespace ADNES.Cartridge
 {

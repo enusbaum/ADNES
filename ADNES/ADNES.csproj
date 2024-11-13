@@ -5,9 +5,6 @@
 		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
 	</PropertyGroup>
 	<ItemGroup>
-		<PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="8.0.2" />
-	</ItemGroup>
-	<ItemGroup>
 		<InternalsVisibleTo Include="ADNES.Tests" />
 	</ItemGroup>
 </Project>
