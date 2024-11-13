@@ -218,9 +218,7 @@ namespace ADNES.PPU
                 // https://wiki.nesdev.com/w/index.php/PPU_registers#The_PPUDATA_read_buffer_.28post-fetch.29
                 if (_registerPPUADDR < 0x3F00)
                 {
-                    var bufferedData = _registerPPUDATABuffer;
-                    _registerPPUDATABuffer = data;
-                    data = bufferedData;
+                    (_registerPPUDATABuffer, data) = (data, _registerPPUDATABuffer);
                 }
                 else
                 {
