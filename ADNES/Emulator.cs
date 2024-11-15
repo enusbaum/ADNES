@@ -9,21 +9,25 @@ using ADNES.Enums;
 
 namespace ADNES
 {
-    public class Emulator
+    public class Emulator(
+        Emulator.ProcessFrameDelegate processFrameDelegate,
+        EmulatorSpeed emulatorSpeed = EmulatorSpeed.Normal)
     {
         //Frame Rendering Components
         public delegate void ProcessFrameDelegate(ReadOnlySpan<byte> outputFrame);
-        private readonly ProcessFrameDelegate _processFrame;
 
         //NES System Components
         private Core _cpu;
         private PPU.Core _ppu;
-        private readonly NESCartridge _cartridge;
-        public readonly IController Controller1;
-        private readonly EmulatorSpeed _enumEmulatorSpeed;
+        private NESCartridge _cartridge;
+        public readonly IController Controller1 = new NESController();
         private Task _emulatorTask;
-        private bool _powerOn;
         private byte[] _romData;
+
+        /// <summary>
+        ///     Flag to determine if the Emulator is currently running
+        /// </summary>
+        public bool IsRunning;
 
         //Public Statistics
         public long TotalCPUCycles => _cpu.Cycles;
@@ -32,18 +36,13 @@ namespace ADNES
         //Internal Statistics
         private int _cpuIdleCycles;
 
-        public Emulator(byte[] rom, ProcessFrameDelegate processFrameDelegate, EmulatorSpeed emulatorSpeed = EmulatorSpeed.Normal)
+        public Emulator(byte[] rom, ProcessFrameDelegate processFrameDelegate, EmulatorSpeed emulatorSpeed = EmulatorSpeed.Normal) : this(processFrameDelegate, emulatorSpeed)
         {
             _romData = rom;
-
-            //Setup Emulator Components
-            Controller1 = new NESController();
             _cartridge = new NESCartridge(rom);
-            _ppu = new PPU.Core(_cartridge.MemoryMapper, DMATransfer);
-            _cpu = new Core(_cartridge.MemoryMapper, Controller1);
-            _enumEmulatorSpeed = emulatorSpeed;
-            _processFrame = processFrameDelegate;
         }
+
+        //Setup Emulator Components
 
         /// <summary>
         ///     Load new ROM into memory
@@ -52,10 +51,11 @@ namespace ADNES
         public void LoadRom(byte[] romData)
         {
             //Make sure we're not currently running
-            if (_powerOn)
+            if (IsRunning)
                 throw new Exception("Cannot Load ROM while Emulator is Running");
 
             _romData = romData;
+            _cartridge = new NESCartridge(_romData);
         }
 
         /// <summary>
@@ -64,8 +64,11 @@ namespace ADNES
         public void Start()
         {
             //Verify there's a delegate assigned to process frames
-            if (_processFrame == null)
-                throw new System.Exception("No Frame Processing Delegate Assigned");
+            if (processFrameDelegate == null)
+                throw new Exception("No Frame Processing Delegate Assigned");
+
+            if (_romData == null)
+                throw new Exception("No ROM Data Loaded");
 
             _cartridge.LoadROM(_romData);
             _ppu = new PPU.Core(_cartridge.MemoryMapper, DMATransfer);
@@ -73,14 +76,14 @@ namespace ADNES
 
             _cpu.Reset();
             _ppu.Reset();
-            _powerOn = true;
+            IsRunning = true;
             _emulatorTask = new TaskFactory().StartNew(Run, TaskCreationOptions.LongRunning);
         }
 
         /// <summary>
         ///     Signals the Emulator Task to stop
         /// </summary>
-        public void Stop() => _powerOn = false;
+        public void Stop() => IsRunning = false;
 
         /// <summary>
         ///     Delegate used to transfer information between CPU memory (typically CPU RAM) and the PPU OAM buffer
@@ -127,7 +130,7 @@ namespace ADNES
             _cpu.Cycles = 4;
 
             int cpuTicks;
-            while (_powerOn)
+            while (IsRunning)
             {
                 //If we're not idling (DMA), tick the CPU
                 if (_cpuIdleCycles == 0)
@@ -162,11 +165,11 @@ namespace ADNES
                 //If there is, let's render it
                 if (_ppu.FrameReady)
                 {
-                    _processFrame(_ppu.FrameBuffer);
+                    processFrameDelegate(_ppu.FrameBuffer);
                     _ppu.FrameReady = false;
 
                     //Throttle our frame rate here to the desired rate (if required)
-                    switch (_enumEmulatorSpeed)
+                    switch (emulatorSpeed)
                     {
                         case EmulatorSpeed.Turbo:
                             continue;
