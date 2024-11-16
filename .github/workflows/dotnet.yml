@@ -13,6 +13,7 @@ env:
   PROJECT_NAME: ADNES
   NUGET_FEED: https://api.nuget.org/v3/index.json
   NUGET_KEY: ${{ secrets.NUGET_KEY }}
+  GITHUB_PAT: ${{ secrets.GH_PAT }}
 
 jobs:
   build:
@@ -52,3 +53,6 @@ jobs:
       
       - name: Push to NuGet Feed
         run: dotnet nuget push ./nupkg/*.nupkg --source $NUGET_FEED --api-key $NUGET_KEY --skip-duplicate
+        
+      - name: Push to GitHub Packages
+        run: dotnet nuget push ./nupkg/*.nupkg --source "https://nuget.pkg.github.com/${{ github.repository_owner }}/index.json" --api-key ${{ secrets.GITHUB_PAT }} --skip-duplicate
