@@ -29,7 +29,7 @@ public delegate void ProcessFrameDelegate(byte[] outputFrame);
 3. Create an instance of the Emulator
 
 ```csharp
-var emularor = new Emulator(byte[] rom, ProcessFrameDelegate processFrameDelegate);
+var emulator = new Emulator(byte[] rom, ProcessFrameDelegate processFrameDelegate);
 ```
 
 As the emulator is running, Frames are processed and passed to the delegate as they become available. The delegate can then be used to display the frames in your own project.
