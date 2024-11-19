@@ -103,7 +103,11 @@ namespace ADNES.Helpers
         /// <returns></returns>
         public static byte[] GetData(byte value)
         {
+            if (value > 0x3F)
+                throw new OverflowException($"Color Value {value:x} is an invalid NES palette color");
+
             var color = ColorPalette[value];
+
             return [color.B, color.G, color.R, 255];
         }
 
@@ -117,6 +121,9 @@ namespace ADNES.Helpers
         {
             for (var i = 0; i < data.Length; i++)
             {
+                if (data[i] > 0x3F)
+                    throw new OverflowException($"Color Value {data[i]:x} is an invalid NES palette color");
+
                 var color = ColorPalette[data[i]];
                 FrameBuffer[i * 4] = color.B;
                 FrameBuffer[i * 4 + 1] = color.G;
