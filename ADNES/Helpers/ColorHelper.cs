@@ -97,7 +97,7 @@ namespace ADNES.Helpers
 
         /// <summary>
         ///     Takes in an 8-bit value representing a color in the NES 2C02 color palette and returns a byte[] representing the
-        ///     color in Argb format
+        ///     color in BGRA format
         /// </summary>
         /// <param name="value"></param>
         /// <returns></returns>
@@ -113,7 +113,7 @@ namespace ADNES.Helpers
 
         /// <summary>
         ///     This method takes in the 8bpp bitmap data from the NES Emulator and converts it using the mapped color palette to a
-        ///     bitmap representation in a byte[] that can later be used in the WriteableBitmap.
+        ///     32bpp BGRA Bitmap representation in a byte[] array.
         /// </summary>
         /// <param name="data"></param>
         /// <returns></returns>
