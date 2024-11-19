@@ -13,16 +13,31 @@ namespace ADNES
         Emulator.ProcessFrameDelegate processFrameDelegate,
         EmulatorSpeed emulatorSpeed = EmulatorSpeed.Normal)
     {
-        //Frame Rendering Components
+        /// <summary>
+        ///    Delegate used to process a frame of data from the PPU
+        /// </summary>
+        /// <param name="outputFrame">Raw 8bpp Bitmap data from the NES PPU<param>
         public delegate void ProcessFrameDelegate(byte[] outputFrame);
 
         //NES System Components
         private Core _cpu;
         private PPU.Core _ppu;
         private NESCartridge _cartridge;
-        public readonly IController Controller1 = new NESController();
+
+        /// <summary>
+        ///    Task which will contain the Emulator rendering loop while the Emulator is running
+        /// </summary>
         private Task _emulatorTask;
+
+        /// <summary>
+        ///     iNES ROM Data that is loaded into the Emulator
+        /// </summary>
         private byte[] _romData;
+
+        /// <summary>
+        ///     Player 1 Controller for the Emulator
+        /// </summary>
+        public readonly IController Controller1 = new NESController();
 
         /// <summary>
         ///     Flag to determine if the Emulator is currently running
@@ -30,7 +45,15 @@ namespace ADNES
         public bool IsRunning;
 
         //Public Statistics
+
+        /// <summary>
+        ///     Total CPU Cycles since the Emulator was started
+        /// </summary>
         public long TotalCPUCycles => _cpu.Cycles;
+
+        /// <summary>
+        ///     Total PPU Cycles since the Emulator was started
+        /// </summary>
         public long TotalPPUCycles => _ppu.Cycles;
 
         //Internal Statistics
