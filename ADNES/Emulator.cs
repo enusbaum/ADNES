@@ -14,7 +14,7 @@ namespace ADNES
         EmulatorSpeed emulatorSpeed = EmulatorSpeed.Normal)
     {
         //Frame Rendering Components
-        public delegate void ProcessFrameDelegate(ReadOnlySpan<byte> outputFrame);
+        public delegate void ProcessFrameDelegate(byte[] outputFrame);
 
         //NES System Components
         private Core _cpu;
