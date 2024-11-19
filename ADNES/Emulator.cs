@@ -56,6 +56,16 @@ namespace ADNES
         /// </summary>
         public long TotalPPUCycles => _ppu.Cycles;
 
+        /// <summary>
+        ///     Height of Frames Rendered by the NES Emulator
+        /// </summary>
+        public const int Height = 240;
+
+        /// <summary>
+        ///     Width of Frames Rendered by the NES Emulator
+        /// </summary>
+        public const int Width = 256;
+
         //Internal Statistics
         private int _cpuIdleCycles;
 

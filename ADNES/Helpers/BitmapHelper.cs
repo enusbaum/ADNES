@@ -10,12 +10,10 @@ namespace ADNES.Helpers
     /// </summary>
     public static class BitmapHelper
     {
-        private const int Height = 240;
-        private const int Width = 256;
         private const int HeaderSize = 54;
         private const int BytesPerPixel = 3;
-        private static readonly int RowSize = ((Width * BytesPerPixel + 3) / 4) * 4; // Round up to multiple of 4
-        private static readonly byte[] ImageBuffer = new byte[54 + ((Width * Height) * BytesPerPixel)]; // Header + 3 bytes per pixel
+        private static readonly int RowSize = ((Emulator.Width * BytesPerPixel + 3) / 4) * 4; // Round up to multiple of 4
+        private static readonly byte[] ImageBuffer = new byte[54 + ((Emulator.Width * Emulator.Height) * BytesPerPixel)]; // Header + 3 bytes per pixel
 
         static BitmapHelper()
         {
@@ -26,8 +24,8 @@ namespace ADNES.Helpers
             ImageBuffer[6] = ImageBuffer[7] = ImageBuffer[8] = ImageBuffer[9] = 0; // Reserved
             BitConverter.GetBytes(54).CopyTo(ImageBuffer, 10); // Offset to image data
             BitConverter.GetBytes(40).CopyTo(ImageBuffer, 14); // Header size
-            BitConverter.GetBytes(Width).CopyTo(ImageBuffer, 18); // Width
-            BitConverter.GetBytes(Height).CopyTo(ImageBuffer, 22); // Height
+            BitConverter.GetBytes(Emulator.Width).CopyTo(ImageBuffer, 18); // Width
+            BitConverter.GetBytes(Emulator.Height).CopyTo(ImageBuffer, 22); // Height
             ImageBuffer[26] = 1; // Color planes
             ImageBuffer[28] = 24; // Bits per pixel
             ImageBuffer[30] = ImageBuffer[31] = ImageBuffer[32] = ImageBuffer[33] = 0; // No compression
@@ -54,15 +52,15 @@ namespace ADNES.Helpers
         {
             var index = HeaderSize;
             var inputBytesPerPixel = 4; // Assuming input is BGRA
-            var inputRowSize = Width * inputBytesPerPixel;
+            var inputRowSize = Emulator.Width * inputBytesPerPixel;
 
             try
             {
-                for (var y = Height - 1; y >= 0; y--) // Start from the bottom row
+                for (var y = Emulator.Height - 1; y >= 0; y--) // Start from the bottom row
                 {
                     var inputRowStart = y * inputRowSize;
 
-                    for (var x = 0; x < Width; x++)
+                    for (var x = 0; x < Emulator.Width; x++)
                     {
                         var inputPixelIndex = inputRowStart + x * inputBytesPerPixel;
 
@@ -73,7 +71,7 @@ namespace ADNES.Helpers
                     }
 
                     // Calculate padding for the current row
-                    var padding = RowSize - (Width * BytesPerPixel);
+                    var padding = RowSize - (Emulator.Width * BytesPerPixel);
 
                     // Add padding bytes to the row
                     for (var p = 0; p < padding; p++)

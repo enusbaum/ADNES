@@ -16,9 +16,9 @@ namespace ADNES.Helpers
         public static readonly Color[] ColorPalette = new Color[0x40];
 
         /// <summary>
-        ///     Buffer for a full frame of 8-bit NES color data as 24-bit BMP color data
+        ///     Buffer for a full frame of 8-bit NES color data as 32bpp BMP color data
         /// </summary>
-        public static readonly byte[] FrameBuffer = new byte[256 * 240 * 4];
+        public static readonly byte[] FrameBuffer = new byte[Emulator.Width * Emulator.Height * 4];
 
         static ColorHelper()
         {

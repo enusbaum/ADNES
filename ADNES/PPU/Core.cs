@@ -67,8 +67,6 @@ namespace ADNES.PPU
         //https://wiki.nesdev.com/w/index.php/PPU_rendering
         private const int MaxCycles = 340;
         private const int MaxScanline = 261;
-        private const int MaxWidth = 256;
-        private const int MaxHeight = 240;
 
         /// <summary>
         ///     Signals that there is a frame in the buffer ready for rendering
@@ -78,7 +76,7 @@ namespace ADNES.PPU
         /// <summary>
         ///     Frame buffer holding 240x256 rendered frame
         /// </summary>
-        public readonly byte[] FrameBuffer = new byte[MaxHeight * MaxWidth];
+        public readonly byte[] FrameBuffer = new byte[Emulator.Height * Emulator.Width];
 
         //Internal Counters
         private int _currentCycle;
