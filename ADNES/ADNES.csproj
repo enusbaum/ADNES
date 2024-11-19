@@ -14,7 +14,7 @@
 
 		<!-- NuGet settings -->
 		<PackageId>ADNES</PackageId>
-		<PackageVersion>1.0.2</PackageVersion>
+		<PackageVersion>1.0.3</PackageVersion>
 		<PackageTags>NES Nintendo Emulation Emulator</PackageTags>
 		<PackageLicenseExpression>MIT</PackageLicenseExpression>
 		<PackageProjectUrl>https://github.com/enusbaum/ADNES</PackageProjectUrl>
