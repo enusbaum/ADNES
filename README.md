@@ -49,6 +49,6 @@ Player 1 Controller can be accessed via `public readonly IController Controller1
 
 There are several properties that are updated during runtime to report the status of the Emulator:
 
-- `public bool IsRunning` - Returns true if the Emulator is currently running`
+- `public bool IsRunning` - Returns true if the Emulator is currently running
 - `public long TotalCPUCycles` - The total number of CPU cycles that have been processed since the Emulator was started
 - `public long TotalPPUCycles` - The total number of PPU cycles that have been processed since the Emulator was started
