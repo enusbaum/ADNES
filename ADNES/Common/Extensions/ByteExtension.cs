@@ -13,7 +13,7 @@ namespace ADNES.Common.Extensions
         /// <param name="b"></param>
         /// <returns></returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static bool IsNegative(this byte b) => (b & (1 << 7)) != 0;
+        public static bool IsNegative(this byte b) => b.IsBitSet(7);
 
         /// <summary>
         ///     Returns if the specified bit was set
