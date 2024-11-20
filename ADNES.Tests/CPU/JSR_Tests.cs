@@ -1,5 +1,5 @@
 ﻿using System;
-using ADNES.Cartridge.Mappers.impl;
+using ADNES.Cartridge.Mappers;
 using ADNES.CPU;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
