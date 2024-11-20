@@ -35,7 +35,7 @@ ADNES to 32bpp bitmap data (or 32bpp Bitmap files).
 var emulator = new Emulator(byte[] rom, ProcessFrameDelegate processFrameDelegate);
 ```
 
-As the emulator is running, Frames are processed and passed to the delegate as they become available. The delegate can then be used to display the frames in your own project.
+ADNES supports iNES format ROMs. The ROM is passed as a byte array to the Emulator. The delegate is used to pass frames to your application as they become available.
 
 4. Start the Emulator
 
@@ -43,7 +43,7 @@ As the emulator is running, Frames are processed and passed to the delegate as t
 public void Start()
 ```
 
-Once the emulator is started, it will begin processing the ROM and rendering frames to the specified `ProcessFrameDelegate`.
+As the emulator is running, Frames are processed and passed to the delegate as they become available. The delegate can then be used to display the frames in your own project.
 
 Player 1 Controller can be accessed via `public readonly IController Controller1` on the instance of `ADNES.Emulator`.
 
