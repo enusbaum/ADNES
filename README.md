@@ -26,6 +26,9 @@ Install-Package ADNES
 public delegate void ProcessFrameDelegate(byte[] outputFrame);
 ```
 
+Frames returned from ADNES are 8bpp bitmaps that are 256x240 pixels in size and mapped to the 2C02 NTSC Color Palette. There are helper methods in ADNES `ADNES.Helpers` to assist you in converting the data from
+ADNES to 32bpp bitmap data (or 32bpp Bitmap files).
+
 3. Create an instance of the Emulator
 
 ```csharp
@@ -39,3 +42,13 @@ As the emulator is running, Frames are processed and passed to the delegate as t
 ```csharp
 public void Start()
 ```
+
+Once the emulator is started, it will begin processing the ROM and rendering frames to the specified `ProcessFrameDelegate`.
+
+Player 1 Controller can be accessed via `public readonly IController Controller1` on the instance of `ADNES.Emulator`.
+
+There are several properties that are updated during runtime to report the status of the Emulator:
+
+- `public bool IsRunning` - Returns true if the Emulator is currently running`
+- `public long TotalCPUCycles` - The total number of CPU cycles that have been processed since the Emulator was started
+- `public long TotalPPUCycles` - The total number of PPU cycles that have been processed since the Emulator was started
