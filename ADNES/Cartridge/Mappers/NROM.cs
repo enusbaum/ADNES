@@ -1,7 +1,7 @@
 ﻿using System;
 using ADNES.Cartridge.Mappers.Enums;
 
-namespace ADNES.Cartridge.Mappers.impl
+namespace ADNES.Cartridge.Mappers
 {
     /// <summary>
     ///     NES Mapper 0 (NROM)
@@ -54,7 +54,7 @@ namespace ADNES.Cartridge.Mappers.impl
             if (offset <= 0x3FFF)
                 return ReadInterceptors.TryGetValue(offset, out currentReadInterceptor)
                     ? currentReadInterceptor(offset)
-                    : (byte) 0x0;
+                    : (byte)0x0;
 
             //PRG ROM
             if (offset <= 0xFFFF)
@@ -87,7 +87,7 @@ namespace ADNES.Cartridge.Mappers.impl
             }
 
             if (offset >= 0x8000 && offset <= 0xFFFF)
-            { 
+            {
                 _prgRom[offset - 0x8000] = data;
                 return;
             }

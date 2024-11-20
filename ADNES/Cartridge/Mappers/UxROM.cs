@@ -1,85 +1,82 @@
 ﻿using System;
 using ADNES.Cartridge.Mappers.Enums;
 
-namespace ADNES.Cartridge.Mappers.impl
+namespace ADNES.Cartridge.Mappers
 {
     /// <summary>
-    ///     NES Mapper 3 (CNROM)
+    ///     NES Mapper 2 (UxROM)
     ///
-    ///     More Info: https://wiki.nesdev.com/w/index.php/CNROM
+    ///     More Info: https://wiki.nesdev.com/w/index.php/UxROM
     /// </summary>
-    internal class CNROM : MapperBase, IMapper
+    internal class UxROM : MapperBase, IMapper
     {
         /// <summary>
         ///     PRG ROM
         ///
-        ///     32KB Capacity
+        ///     256K Capacity
         /// </summary>
-        private readonly byte[] _prgRom = new byte[0x8000];
+        private readonly byte[] _prgRom;
 
         /// <summary>
         ///     CHR ROM
         ///
-        ///     32KB Capacity, 8K Switchable Window
+        ///     8K Capacity
         /// </summary>
         private readonly byte[] _chrRom;
 
         /// <summary>
-        ///     Offset of our Switched Bank in CHR ROM
+        ///     Switchable Bank 0
         /// </summary>
-        private int _chrRomOffset;
+        private int _prgBank0Offset = 0;
 
         /// <summary>
-        ///     PRG ROM Mirroring Enabled
+        ///     Bank 1 is always fixed to the last bank
         /// </summary>
-        private readonly bool _prgRomMirroring;
+        private readonly int _prgBank1Offset;
 
         public NametableMirroring NametableMirroring { get; set; }
 
-        public CNROM(byte[] prgRom, int prgRomBanks, byte[] chrRom, NametableMirroring nametableMirroring)
+        public UxROM(byte[] prgRom, int prgRomBanks, byte[] chrRom, NametableMirroring nametableMirroring)
         {
+            _prgRom = prgRom;
             _chrRom = chrRom;
             NametableMirroring = nametableMirroring;
-
-            //Copy over all of PRG ROM (16KB or 32KB)
-            Array.Copy(prgRom, 0, _prgRom, 0, prgRom.Length);
-
-            //If it was only 16KB, go ahead and mirror the second 16KB
-            if (prgRom.Length <= 0x4000)
-                Array.Copy(prgRom, 0, _prgRom, 0x4000, prgRom.Length);
+            _prgBank1Offset = (prgRomBanks - 1) * 0x4000;
         }
 
         /// <summary>
         ///     Reads one byte from the specified bank, at the specified offset
         /// </summary>
-        /// <param name="memoryType"></param>
         /// <param name="offset"></param>
         /// <returns></returns>
         public byte ReadByte(int offset)
         {
             // CHR ROM
             if (offset < 0x2000)
-                return _chrRom[_chrRomOffset + offset];
+                return _chrRom[offset];
 
             //PPU Registers
             if (offset <= 0x3FFF)
-                return ReadInterceptors.TryGetValue(offset, out currentReadInterceptor)
-                    ? currentReadInterceptor(offset)
-                    : (byte) 0x0;
+                return ReadInterceptors.TryGetValue(offset, out currentReadInterceptor) ? currentReadInterceptor(offset) : (byte)0x0;
 
-            //Fixed PRG ROM
+            //Some UxROM boards from Nintendo have bus conflicts, we avoid these here
+            if (offset >= 0x6000 && offset < 0x8000)
+                return 0x0;
+
+            //16 KB switchable PRG ROM bank
+            if (offset <= 0xBFFF)
+                return _prgRom[_prgBank0Offset + (offset - 0x8000)];
+
+            //16 KB PRG ROM bank, fixed to the last bank
             if (offset <= 0xFFFF)
-                return _prgRom[offset - 0x8000];
+                return _prgRom[_prgBank1Offset + (offset - 0xC000)];
 
             throw new ArgumentOutOfRangeException(nameof(offset), offset, "Maximum value of offset is 0xFFFF");
         }
 
         /// <summary>
         ///     Writes one byte to the specified bank, at the specified offset
-        ///
-        ///     CHR Bank Switching is handled at $8000->$FFFF
         /// </summary>
-        /// <param name="memoryType"></param>
         /// <param name="offset"></param>
         /// <param name="data"></param>
         public void WriteByte(int offset, byte data)
@@ -87,7 +84,7 @@ namespace ADNES.Cartridge.Mappers.impl
             //CHR ROM+RAM Writes
             if (offset < 0x2000)
             {
-                _chrRom[_chrRomOffset + offset] = data;
+                _chrRom[offset] = data;
                 return;
             }
 
@@ -100,16 +97,18 @@ namespace ADNES.Cartridge.Mappers.impl
                 return;
             }
 
-            //CHR Bank Select
-            if (offset >= 0x8000 && offset <= 0xFFFF)
+            //Some UxROM boards from Nintendo have bus conflicts, we avoid these here
+            if (offset >= 0x6000 && offset <= 0x7FFF)
+                return;
+
+            //Bank Select
+            if (offset >= 0xC000 && offset <= 0xFFFF)
             {
-                _chrRomOffset = (data & 0x03) * 0x2000;
+                _prgBank0Offset = (data & 0x0F) * 0x4000;
                 return;
             }
 
             throw new ArgumentOutOfRangeException(nameof(offset), offset, "Maximum value of offset is 0xFFFF");
         }
-
-        
     }
 }

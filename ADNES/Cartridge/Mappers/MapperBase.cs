@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace ADNES.Cartridge.Mappers.impl
+namespace ADNES.Cartridge.Mappers
 {
     /// <summary>
     ///     Base Class for Mappers
@@ -65,6 +65,6 @@ namespace ADNES.Cartridge.Mappers.impl
                 RegisterWriteInterceptor(writeInterceptor, i);
         }
 
-        
+
     }
 }

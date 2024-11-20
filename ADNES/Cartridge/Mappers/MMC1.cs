@@ -3,7 +3,7 @@ using System.Runtime.CompilerServices;
 using ADNES.Cartridge.Mappers.Enums;
 using ADNES.Common.Extensions;
 
-namespace ADNES.Cartridge.Mappers.impl
+namespace ADNES.Cartridge.Mappers
 {
     /// <summary>
     ///     NES Mapper 1 (MMC1)
@@ -96,12 +96,12 @@ namespace ADNES.Cartridge.Mappers.impl
 
             //PPU Registers
             if (offset <= 0x3FFF)
-                return ReadInterceptors.TryGetValue(offset, out currentReadInterceptor) ? currentReadInterceptor(offset) : (byte) 0x0;
+                return ReadInterceptors.TryGetValue(offset, out currentReadInterceptor) ? currentReadInterceptor(offset) : (byte)0x0;
 
             // PRG RAM Bank == $6000-$7FFF
             if (offset >= 0x6000 && offset <= 0x7FFF)
             {
-                if(!_usePrgRam)
+                if (!_usePrgRam)
                     throw new AccessViolationException($"Attempt to read PRG RAM when disabled. Offset ${offset:X4}");
 
                 return _prgRam[offset - 0x6000];
@@ -133,10 +133,10 @@ namespace ADNES.Cartridge.Mappers.impl
             // CHR Bank 1 == $1000-$1FFF
             if (offset <= 0x1FFF)
             {
-                if(!_useChrRam)
+                if (!_useChrRam)
                     throw new AccessViolationException($"Invalid write to CHR ROM (CHR RAM not enabled). Offset: {offset:X4}");
 
-                var chrOffset = (offset / 0x1000) == 0 ? _chrBank0Offset : _chrBank1Offset;
+                var chrOffset = offset / 0x1000 == 0 ? _chrBank0Offset : _chrBank1Offset;
                 chrOffset += offset % 0x1000;
                 _chrRom[chrOffset] = data;
                 return;
@@ -224,8 +224,8 @@ namespace ADNES.Cartridge.Mappers.impl
             {
                 _registerControl = _registerShift;
 
-                _currentPrgMode = (_registerShift >> 2) & 0x03;
-                _currentChrMode = (_registerShift >> 4) & 0x01;
+                _currentPrgMode = _registerShift >> 2 & 0x03;
+                _currentChrMode = _registerShift >> 4 & 0x01;
                 switch (_registerControl & 0x03)
                 {
                     case 0:

@@ -1,5 +1,4 @@
 ﻿using ADNES.Cartridge.Mappers.Enums;
-using ADNES.Cartridge.Mappers.impl;
 
 namespace ADNES.Cartridge.Mappers
 {

@@ -2,7 +2,6 @@
 using ADNES.Cartridge.Flags;
 using ADNES.Cartridge.Mappers;
 using ADNES.Cartridge.Mappers.Enums;
-using ADNES.Cartridge.Mappers.impl;
 using ADNES.Common.Extensions;
 
 namespace ADNES.Cartridge
