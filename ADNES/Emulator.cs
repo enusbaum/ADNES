@@ -57,6 +57,11 @@ namespace ADNES
         public long TotalPPUCycles => _ppu.Cycles;
 
         /// <summary>
+        ///     Total Frames Rendered by the NES Emulator
+        /// </summary>
+        public long TotalFrames;
+
+        /// <summary>
         ///     Height of Frames Rendered by the NES Emulator
         /// </summary>
         public const int Height = 240;
@@ -199,6 +204,7 @@ namespace ADNES
                 if (_ppu.FrameReady)
                 {
                     processFrameDelegate(_ppu.FrameBuffer);
+                    TotalFrames++;
                     _ppu.FrameReady = false;
 
                     //Throttle our frame rate here to the desired rate (if required)
