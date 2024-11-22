@@ -4,7 +4,7 @@ using ADNES.CPU.Enums;
 namespace ADNES.CPU
 {
     /// <summary>
-    ///     We use the Opcode class to set specific details for a Opcode
+    ///     We use the InstructionMetadata class to set specific details for an Opcode
     ///     such as Cycles, Addressing Mode, etc.
     /// </summary>
     internal record InstructionMetadata

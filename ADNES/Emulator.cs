@@ -9,6 +9,13 @@ using ADNES.Enums;
 
 namespace ADNES
 {
+    /// <summary>
+    ///     The Main Emulator class for ADNES.
+    ///
+    ///     This class handles all the orchestration and communication between the CPU, PPU, Cartridge, and Controllers.
+    /// </summary>
+    /// <param name="processFrameDelegate"></param>
+    /// <param name="emulatorSpeed"></param>
     public class Emulator(
         Emulator.ProcessFrameDelegate processFrameDelegate,
         EmulatorSpeed emulatorSpeed = EmulatorSpeed.Normal)
