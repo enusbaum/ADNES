@@ -52,3 +52,4 @@ There are several properties that are updated during runtime to report the statu
 - `public bool IsRunning` - Returns true if the Emulator is currently running
 - `public long TotalCPUCycles` - The total number of CPU cycles that have been processed since the Emulator was started
 - `public long TotalPPUCycles` - The total number of PPU cycles that have been processed since the Emulator was started
+- `public long TotalFrames` - The total number of frames that have been rendered since the Emulator was started
