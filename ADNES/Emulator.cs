@@ -47,7 +47,7 @@ namespace ADNES
         public readonly IController Controller1 = new NESController();
 
         /// <summary>
-        ///     Flag to determine if the Emulator is currently running
+        ///     Flag to determine if the Emulator Task is currently running
         /// </summary>
         public bool IsRunning;
 
@@ -78,13 +78,26 @@ namespace ADNES
         /// </summary>
         public const int Width = 256;
 
+        /// <summary>
+        ///    Current State of the Emulator
+        /// </summary>
+        public EmulatorState State => _state;
+        private EmulatorState _state;
+
+        /// <summary>
+        ///     Event used to pause the Emulator Task
+        /// </summary>
+        private readonly AutoResetEvent _pauseEvent = new(false);
+
         //Internal Statistics
         private int _cpuIdleCycles;
+        
 
         public Emulator(byte[] rom, ProcessFrameDelegate processFrameDelegate, EmulatorSpeed emulatorSpeed = EmulatorSpeed.Normal) : this(processFrameDelegate, emulatorSpeed)
         {
             _romData = rom;
             _cartridge = new NESCartridge(rom);
+            _state = EmulatorState.Stopped;
         }
 
         //Setup Emulator Components
@@ -122,6 +135,7 @@ namespace ADNES
             _cpu.Reset();
             _ppu.Reset();
             IsRunning = true;
+            _state = EmulatorState.Running;
             _emulatorTask = new TaskFactory().StartNew(Run, TaskCreationOptions.LongRunning);
         }
 
@@ -129,6 +143,29 @@ namespace ADNES
         ///     Signals the Emulator Task to stop
         /// </summary>
         public void Stop() => IsRunning = false;
+
+        /// <summary>
+        ///     Pauses execution of the ADNES
+        /// </summary>
+        public void Pause()
+        {
+            //Only pause if we're running
+            if (!IsRunning || State != EmulatorState.Running) return;
+
+            _state = EmulatorState.Paused;
+        }
+
+        /// <summary>
+        ///     Resumes the execution of ADNES from a Paused state
+        /// </summary>
+        public void Unpause()
+        {
+            //Only unpause if we're paused
+            if (!IsRunning || State != EmulatorState.Paused) return;
+
+            _state = EmulatorState.Running;
+            _pauseEvent.Set();
+        }
 
         /// <summary>
         ///     Delegate used to transfer information between CPU memory (typically CPU RAM) and the PPU OAM buffer
@@ -166,7 +203,7 @@ namespace ADNES
         ///
         ///     Task will run until the _powerOn value is set to false
         /// </summary>
-        private void Run()
+        private async Task Run()
         {
             //Frame Timing Stopwatch
             var sw = Stopwatch.StartNew();
@@ -177,6 +214,14 @@ namespace ADNES
             int cpuTicks;
             while (IsRunning)
             {
+
+                //Monitor the PauseEvent to see if we need to pause the emulator
+                if (_state == EmulatorState.Paused)
+                {
+                    _pauseEvent.WaitOne();
+                    _state = EmulatorState.Running;
+                }
+
                 //If we're not idling (DMA), tick the CPU
                 if (_cpuIdleCycles == 0)
                 {
@@ -220,10 +265,10 @@ namespace ADNES
                         case EmulatorSpeed.Turbo:
                             continue;
                         case EmulatorSpeed.Normal when sw.ElapsedMilliseconds < 17:
-                            Thread.Sleep((int)(17 - sw.ElapsedMilliseconds));
+                            await Task.Delay((int)(17 - sw.ElapsedMilliseconds));
                             break;
                         case EmulatorSpeed.Half when sw.ElapsedMilliseconds < 32:
-                            Thread.Sleep((int)(32 - sw.ElapsedMilliseconds));
+                            await Task.Delay((int)(32 - sw.ElapsedMilliseconds));
                             break;
                     }
                     sw.Restart();
